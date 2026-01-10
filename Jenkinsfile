@@ -26,7 +26,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
                 }
             }
         }
@@ -34,9 +34,7 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 withDockerRegistry([credentialsId: 'dockerhub-credentials', url: '']) {
-                    script {
-                        dockerImage.push()
-                    }
+                    sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
                 }
             }
         }
@@ -44,7 +42,9 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 sh """
-                kubectl set image deployment/${KUBE_DEPLOYMENT} ${KUBE_CONTAINER}=${DOCKER_IMAGE}:${DOCKER_TAG} --namespace=${KUBE_NAMESPACE}
+                kubectl set image deployment/${KUBE_DEPLOYMENT} \
+                ${KUBE_CONTAINER}=${DOCKER_IMAGE}:${DOCKER_TAG} \
+                --namespace=${KUBE_NAMESPACE}
                 """
             }
         }
