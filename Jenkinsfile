@@ -30,23 +30,14 @@ pipeline {
                 }
             }
         }
-    stage('Push Docker Image') {
-    steps {
-        timeout(time: 10, unit: 'MINUTES') {
-            withDockerRegistry([credentialsId: 'dockerhub-credentials', url: '']) {
-                sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+
+        stage('Push Docker Image') {
+            steps {
+                withDockerRegistry([credentialsId: 'dockerhub-credentials', url: '']) {
+                    sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                }
             }
         }
-    }
-}
-
-#        stage('Push Docker Image') {
- #           steps {
-  #              withDockerRegistry([credentialsId: 'dockerhub-credentials', url: '']) {
-   #                 sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
-    #            }
-     #       }
-      #  }
 
         stage('Deploy to Kubernetes') {
             steps {
@@ -59,4 +50,3 @@ pipeline {
         }
     }
 }
-
