@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    // ✅ Enables automatic trigger on GitHub push
+    triggers {
+        githubPush()
+    }
+
     environment {
         // Docker
         DOCKER_IMAGE = 'ajaymoholvinbox/go-k8s-app'
@@ -59,6 +64,10 @@ pipeline {
             steps {
                 sh '''
                   echo "Deploying to Kubernetes..."
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1505c94 (Enable automatic pipeline trigger via GitHub webhook)
                   kubectl set image deployment/${KUBE_DEPLOYMENT} \
                   ${KUBE_CONTAINER}=${DOCKER_IMAGE}:${DOCKER_TAG} \
                   --namespace=${KUBE_NAMESPACE}
@@ -69,6 +78,19 @@ pipeline {
             }
         }
     }
+<<<<<<< HEAD
+=======
+
+    post {
+        success {
+            echo "🎉 CI/CD Pipeline completed successfully!"
+        }
+        failure {
+            echo "❌ CI/CD Pipeline failed. Check logs."
+        }
+    }
+}
+>>>>>>> 1505c94 (Enable automatic pipeline trigger via GitHub webhook)
 
     post {
         success {
